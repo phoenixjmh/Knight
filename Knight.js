@@ -30,53 +30,64 @@ class Knight {
   }
   compare(a,b){
     if(a[0]===b[0]&&a[1]===b[1]){
-        console.log(`${a} is equal to ${b}`);
         return true;
     }
     else return false;
   }
 
-  knightMoves(start,end){
-      this.position=this.removeOffBoardTarget(start);
-      start=this.position;
-      if(this.position.length<2){
-          console.log('Invalid starting position');
-          return;
+  knightMoves(start=this.position,end){
+      console.log('Start',start,'end: ',end,);
+    if(this.compare(start,end)){
+      console.log('**********************************************************************')
+        return 'FOUNDIT';
+      }
+      
+      let adjacencyList=this.createAdjacencyList();
+      console.log(adjacencyList);
+      let q=[];
+      let arr=[];
+
+       //add first adjascent
+      q.push(adjacencyList[0]);
+
+      while(q.length!==0&&adjacencyList.length>1){
+        let node = q.shift();
+        let targs=node.adjacents;
+        // targs.forEach(targ=>{
+        //   if(targ===end){
+        //     console.log(targ,' found in ',node)
+        //     return targ;
+        //   }
+        
+        // })
+        if(targs.length){
+          q.push(adjacencyList[0]);
+        }
+        
+      }
+      
+      console.log(targs);
+      
+      
+    }
+        
           
-        }
-      if( this.compare(start,end)){
-        console.log('FOUND in top compare');
-        return end;
-        }
 
    
        
-    let targets=this.getTargets(start);
-    console.log([...targets]);
-    targets.forEach(item=>{
-        if(this.compare(item,end)){
-            console.log('FOUND in targets forEach');
-            return[start].concat(this.knightMoves(item,end));
-            
-        }
-        else{
-            console.log(item, 'is not a match to ',end );
-        }
-    })
     
-    for(let t in targets){
-        console.log(targets[t],start);
-        if(this.compare(targets[t],end)){
-            console.log('FOUND in for loop');
-            return 'FOUND';
-        }
-        return [start].concat(this.knightMoves(targets[t],end,targets[t]));
-        
-
-    }
    
-    console.log(targets);
+   
+  createAdjacencyList(){
+    let board= new Board();
+    let adjacencyList=[];
+    board.array.forEach(square=>{
+      let adjacents=this.getTargets(square);
+      adjacencyList.push({name:square.toString(),adjacents:adjacents});
+    })
+    return adjacencyList;
   }
+  
   getTargets(pos) {
     let posX = pos[0];
     let posY = pos[1];
@@ -139,6 +150,6 @@ class Knight {
 
 let board = new Board();
 let knight = new Knight();
-knight.knightMoves([0,0],[7,2]);
+console.log(knight.knightMoves([0,0],[7,2]));
 
 
