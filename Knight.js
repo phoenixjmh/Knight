@@ -41,49 +41,98 @@ class Knight {
       console.log('**********************************************************************')
         return 'FOUNDIT';
       }
-      
+      console.log(this.findPaths(start,end,end));
+
+      // pathLayerOne.forEach(node=>console.log(node.name))
       let adjacencyList=this.createAdjacencyList();
       console.log(adjacencyList);
-      let q=[];
-      let arr=[];
-
-       //add first adjascent
-      q.push(adjacencyList[0]);
-
-      while(q.length!==0&&adjacencyList.length>1){
-        let node = q.shift();
-        let targs=node.adjacents;
-        // targs.forEach(targ=>{
-        //   if(targ===end){
-        //     console.log(targ,' found in ',node)
-        //     return targ;
-        //   }
+    
+      // let q=[];
+      
+      // //add first adjascent
+      // q.push(adjacencyList[0]);
+      // let array=[];
+      // while(q.length!==0&&adjacencyList.length>0){
         
-        // })
+        
+      //   let node = q.shift();
+        
+      //   let targs=node.adjacents;
+      //   targs.forEach(targ=>{
+      //     if(this.compare(targ,end)){
+      //       console.log(targ,' found in ',node)
+      //       array.push(node);
+      //     }
+      //   })
+      //   if(targs.length){
+      //     q.push(adjacencyList.shift());
+      //   }
+        
+      // }
+      
+      // console.log('Finished');
+      // return array;
+    }
+        
+          
+    findPaths(start,end,originalEnd,arr=[],iteratedList=this.createAdjacencyList()){
+      console.log('Start:',start,'End:',end);
+      if(this.compare(start,end))
+     {
+      console.log('got there');
+      return arr;}
+
+    let finished=[];
+      let q=[];
+      
+      //add first adjascent
+      q.push(iteratedList[0]);
+      while(q.length!==0&&iteratedList.length>0){
+        
+        let node = q.shift();
+        console.log(node,'Node   :');
+        
+        let targs=node.adjacents;
+        targs.forEach(targ=>{
+          if(this.compare(targ,end)){
+            console.log(targ,' found in ',node)
+            this.findPaths(start,node.name,arr);
+          }
+        })
+        
         if(targs.length){
-          q.push(adjacencyList[0]);
+          q.push(iteratedList.shift());
         }
         
       }
       
-      console.log(targs);
-      
-      
+      console.log('left the while loop');
+      arr.forEach(node=>{
+        return [finished].concat(this.findPaths(start,arr.shift().name,originalEnd,arr,iteratedList=this.createAdjacencyList()));
+      })
     }
-        
-          
-
    
        
     
    
    
-  createAdjacencyList(){
+  createAdjacencyList(arr){
+    if(arr){
+      let adjacencyList=[];
+      arr.forEach(node=>{
+      let adjacents=this.getTargets(node);
+      adjacencyList.push({name:node,adjacents:adjacents});
+    })
+
+
+    return adjacencyList;
+      }
+    
     let board= new Board();
     let adjacencyList=[];
     board.array.forEach(square=>{
       let adjacents=this.getTargets(square);
-      adjacencyList.push({name:square.toString(),adjacents:adjacents});
+      adjacencyList.push({name:square,adjacents:adjacents});
     })
     return adjacencyList;
   }
