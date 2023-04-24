@@ -4,201 +4,159 @@ class Board {
   }
 
   createBoard() {
-    let row1 = Array.from({ length: 8 }, (item, index) => [0, index]);
-    let row2 = Array.from({ length: 8 }, (item, index) => [1, index]);
-    let row3 = Array.from({ length: 8 }, (item, index) => [2, index]);
-    let row4 = Array.from({ length: 8 }, (item, index) => [3, index]);
-    let row5 = Array.from({ length: 8 }, (item, index) => [4, index]);
-    let row6 = Array.from({ length: 8 }, (item, index) => [5, index]);
-    let row7 = Array.from({ length: 8 }, (item, index) => [6, index]);
-    let row8 = Array.from({ length: 8 }, (item, index) => [7, index]);
+    let row1 = Array.from({ length: 8 },
+      (item, index) => `0${index}`);
+    let row2 = Array.from({ length: 8 },
+      (item, index) => `1${index}`);
+    let row3 = Array.from({ length: 8 },
+      (item, index) => `2${index}`);
+    let row4 = Array.from({ length: 8 },
+      (item, index) => `3${index}`);
+    let row5 = Array.from({ length: 8 },
+      (item, index) => `4${index}`);
+    let row6 = Array.from({ length: 8 },
+      (item, index) => `5${index}`);
+    let row7 = Array.from({ length: 8 },
+      (item, index) => `6${index}`);
+    let row8 = Array.from({ length: 8 },
+      (item, index) => `7${index}`);
     this.array = [
-      ...row1,
-      ...row2,
-      ...row3,
-      ...row4,
-      ...row5,
-      ...row6,
-      ...row7,
-      ...row8,
+      ...row1, ...row2, ...row3, ...row4,
+      ...row5, ...row6, ...row7, ...row8,
     ];
   }
+  generateNodes() {
+    let nodesList = [];
+    let board = new Board().array;
+    for (let square of board) {
+
+      nodesList.push(new Node(square));
+    }
+    return nodesList;
+  }
 }
+class Node {
+  constructor(value, adjacents) {
+    this.value = value;
+    this.adjacents = [];
+  }
+  connect(node) {
+    this.adjacents.push(node);
+  }
+}
+
+
 class Knight {
-  constructor() {
-    this.position = [0, 1];
-  }
-  compare(a,b){
-    if(a[0]===b[0]&&a[1]===b[1]){
-        return true;
+
+  knightMoves(start, end) {
+    start = start.toString().replace(',', '');
+    end = end.toString().replace(',', '');
+
+
+    let board = new Board();
+    let nodesList = board.generateNodes();
+    console.log(nodesList);
+    this.createAdjacencyList(nodesList);
+    console.log(nodesList);
+    let nodeStart, nodeEnd;
+    nodesList.forEach(node => {
+      if (node.value == start)
+        nodeStart = node;
+      if (node.value === end)
+        nodeEnd = node;
+
+
+    })
+    if (!nodeStart || !nodeEnd) {
+
+      return "Not on board";
     }
-    else return false;
+
+
+    return this.getPath(nodeStart, nodeEnd)
   }
 
-  knightMoves(start=this.position,end){
-      console.log('Start',start,'end: ',end,);
-    if(this.compare(start,end)){
-      console.log('**********************************************************************')
-        return 'FOUNDIT';
+  reconstructPath(startNode, endNode, visitedNodes) {
+    let currNode = endNode;
+    let shortestPath = [];
+    while (currNode !== null) {
+      shortestPath.push(currNode);
+      currNode = visitedNodes[currNode.value];
+    }
+    let finishString = 'start =>';
+    shortestPath = shortestPath.reverse();
+    shortestPath.forEach(move => {
+      finishString += ` [ ${Array.from(move.value, Number)} ]=> `
+    })
+    return finishString;
+  }
+
+  getPath(start, end) {
+
+    let q = [start];
+    let visited = {};
+    visited[start.value] = null;
+
+    while (q.length !== 0) {
+      let node = q.shift()
+      if (node.value === end.value) {
+        console.log('FOUND IT');
+        return this.reconstructPath(start, end, visited);
       }
-      console.log(this.findPaths(start,end,end));
+      let adj = node.adjacents;
 
-      // pathLayerOne.forEach(node=>console.log(node.name))
-      let adjacencyList=this.createAdjacencyList();
-      console.log(adjacencyList);
-    
-      // let q=[];
-      
-      // //add first adjascent
-      // q.push(adjacencyList[0]);
-      // let array=[];
-      // while(q.length!==0&&adjacencyList.length>0){
-        
-        
-      //   let node = q.shift();
-        
-      //   let targs=node.adjacents;
-      //   targs.forEach(targ=>{
-      //     if(this.compare(targ,end)){
-      //       console.log(targ,' found in ',node)
-      //       array.push(node);
-      //     }
-      //   })
-      //   if(targs.length){
-      //     q.push(adjacencyList.shift());
-      //   }
-        
-      // }
-      
-      // console.log('Finished');
-      // return array;
-    }
-        
-          
-    findPaths(start,end,originalEnd,arr=[],iteratedList=this.createAdjacencyList()){
-      console.log('Start:',start,'End:',end);
-      if(this.compare(start,end))
-     {
-      console.log('got there');
-      return arr;}
+      adj.forEach(adjacency => {
+        if (!visited.hasOwnProperty(adjacency.value)) {
+          visited[adjacency.value] = node;
+          q.push(adjacency);
 
-    let finished=[];
-      let q=[];
-      
-      //add first adjascent
-      q.push(iteratedList[0]);
-      while(q.length!==0&&iteratedList.length>0){
-        
-        let node = q.shift();
-        console.log(node,'Node   :');
-        
-        let targs=node.adjacents;
-        targs.forEach(targ=>{
-          if(this.compare(targ,end)){
-            console.log(targ,' found in ',node)
-            this.findPaths(start,node.name,arr);
-          }
-        })
-        
-        if(targs.length){
-          q.push(iteratedList.shift());
         }
-        
-      }
-      
-      console.log('left the while loop');
-      arr.forEach(node=>{
-        return [finished].concat(this.findPaths(start,arr.shift().name,originalEnd,arr,iteratedList=this.createAdjacencyList()));
       })
     }
-   
-       
-    
-   
-   
-  createAdjacencyList(arr){
-    if(arr){
-      let adjacencyList=[];
-      arr.forEach(node=>{
-      let adjacents=this.getTargets(node);
-      adjacencyList.push({name:node,adjacents:adjacents});
-    })
+    console.log(visited);
+    return;
 
-
-    return adjacencyList;
-      }
-    
-    let board= new Board();
-    let adjacencyList=[];
-    board.array.forEach(square=>{
-      let adjacents=this.getTargets(square);
-      adjacencyList.push({name:square,adjacents:adjacents});
-    })
-    return adjacencyList;
   }
-  
-  getTargets(pos) {
-    let posX = pos[0];
-    let posY = pos[1];
+
+  createAdjacencyList(nodesList) {
+    nodesList.forEach(node => {
+      this.getTargets(node.value, nodesList, node);
+    })
+
+  }
+
+  getTargets(pos, nodesList, currNode) {
+    let newPos = Array.from(pos, Number);
+    let posX = newPos[0];
+    let posY = newPos[1];
     let targets = [];
-    let target1 = [posX + 1, posY + 2];
-    let target2 = [posX + 2, posY + 1];
-    let target3 = [posX + 2, posY - 1];
-    let target4 = [posX + 1, posY - 2];
-    let target5 = [posX - 1, posY - 2];
-    let target6 = [posX - 2, posY - 1];
-    let target7 = [posX - 2, posY + 1];
-    let target8 = [posX - 1, posY + 2];
-    targets.push(
-      target1,
-      target2,
-      target3,
-      target4,
-      target5,
-      target6,
-      target7,
-      target8
-    );
-    targets=this.removeOffBoardTarget(targets);
-    return targets;
+
+
+    let target1 = [(posX + 1), (posY + 2)].toString().replace(',', '');
+    let target2 = [(posX + 2), (posY + 1)].toString().replace(',', '');
+    let target3 = [(posX + 2), (posY - 1)].toString().replace(',', '');
+    let target4 = [(posX + 1), (posY - 2)].toString().replace(',', '');
+    let target5 = [(posX - 1), (posY - 2)].toString().replace(',', '');
+    let target6 = [(posX - 2), (posY - 1)].toString().replace(',', '');
+    let target7 = [(posX - 2), (posY + 1)].toString().replace(',', '');
+    let target8 = [(posX - 1), posY + 2].toString().replace(',', '');
+    targets.push(target1, target2, target3, target4, target5, target6, target7, target8);
+
+    targets.forEach(target => {
+      nodesList.forEach(node => {
+        if (node.value === target) {
+          currNode.connect(node);
+        }
+      })
+    });
+
   }
-  removeOffBoardTarget(targs,boardSquares= new Board().array){
-    let onBoardTargs=[]
-    if(targs.flat().length>2){
-        targs.forEach(item=>{
-           
-           boardSquares.forEach(square=>{
-            if(item[0]==square[0]&&item[1]==square[1]){
-                // console.log(item,"Valid target")
-                onBoardTargs.push(item);
-            }
-           });
-            
-        });
-    }
 
-    else{
-        onBoardTargs===0;
-        let x=targs[0];
-        let y=targs[1];
-        boardSquares.forEach(square=>{
-            if(square[0]===x&&square[1]===y)
-            {
-                // console.log(targs,'Is on board',square)
-                onBoardTargs=targs;
-            }
-
-        })
-
-    }
-
-    return onBoardTargs;
-    }
 }
-  
 
-let board = new Board();
+
 let knight = new Knight();
-console.log(knight.knightMoves([0,0],[7,2]));
+
+console.log(knight.knightMoves([0, 0], [3, 6]));
 
 
