@@ -86,7 +86,8 @@ class Knight {
     let finishString = 'start =>';
     shortestPath = shortestPath.reverse();
     shortestPath.forEach(move => {
-      finishString += ` [ ${Array.from(move.value, Number)} ]=> `
+      finishString += 
+      ` [ ${Array.from(move.value, Number)} ]=> `
     })
     return finishString;
   }
@@ -132,15 +133,16 @@ class Knight {
     let targets = [];
 
 
-    let target1 = [(posX + 1), (posY + 2)].toString().replace(',', '');
-    let target2 = [(posX + 2), (posY + 1)].toString().replace(',', '');
-    let target3 = [(posX + 2), (posY - 1)].toString().replace(',', '');
-    let target4 = [(posX + 1), (posY - 2)].toString().replace(',', '');
-    let target5 = [(posX - 1), (posY - 2)].toString().replace(',', '');
-    let target6 = [(posX - 2), (posY - 1)].toString().replace(',', '');
-    let target7 = [(posX - 2), (posY + 1)].toString().replace(',', '');
-    let target8 = [(posX - 1), posY + 2].toString().replace(',', '');
-    targets.push(target1, target2, target3, target4, target5, target6, target7, target8);
+    let target1 =`${(posX + 1)}${(posY + 2)}`;
+    let target2 =`${(posX + 2)}${(posY + 1)}`;
+    let target3 =`${(posX + 2)}${(posY - 1)}`;
+    let target4 =`${(posX + 1)}${(posY - 2)}`;
+    let target5 =`${(posX - 1)}${(posY - 2)}`;
+    let target6 =`${(posX - 2)}${(posY - 1)}`;
+    let target7 =`${(posX - 2)}${(posY + 1)}`;
+    let target8 =`${(posX - 1)}${(posY + 2)}`;
+    targets.push(target1, target2, target3, target4,
+                 target5, target6, target7, target8);
 
     targets.forEach(target => {
       nodesList.forEach(node => {
@@ -157,6 +159,6 @@ class Knight {
 
 let knight = new Knight();
 
-console.log(knight.knightMoves([0, 0], [3, 6]));
+console.log(knight.knightMoves([0, 0], [0,1]));
 
 
